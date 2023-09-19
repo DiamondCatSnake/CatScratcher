@@ -104,6 +104,16 @@ export default function App() {
     });
   };
   
+  
+  const removeUser = (userId) => {
+    setUsers((prevUsers) => {
+      const updatedUsers = prevUsers.filter((user) => user._id !== userId);
+      console.log('Users before:', prevUsers);
+      console.log('Users after:', updatedUsers);
+      return updatedUsers;
+    });
+  };
+  
   const removeTask = (categoryId, removeTask) => {
     const category = categories[categoryId];
     const newItems = [];
@@ -116,16 +126,6 @@ export default function App() {
       },
     });
   };
-
-  const removeUser = (userId) => {
-    setUsers((prevUsers) => {
-      const updatedUsers = prevUsers.filter((user) => user._id !== userId);
-      console.log('Users before:', prevUsers);
-      console.log('Users after:', updatedUsers);
-      return updatedUsers;
-    });
-  };
-
   const editTask = (categoryId, edittedTask) => {
     const category = categories[categoryId];
     const newItems = edittedTask;
