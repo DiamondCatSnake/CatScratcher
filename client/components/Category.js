@@ -123,7 +123,6 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
             }}
             className='columnShadow'
           >
-
             {category.items.map((task, index) => (
               <Task key={task._id} task={{...task, Due_Date: formatDueDate(task.Due_Date),}} index={index} onTaskClick={handleTaskClick} onTaskRemove={handleTaskRemove}/>
             ))}
