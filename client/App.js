@@ -10,7 +10,9 @@ const initialCategories = {
     items: [],
   },
 };
+/*
 
+*/
 const onDragEnd = (result, categories, setCategories, users, setUsers) => {
   const { source, destination } = result;
 
@@ -85,9 +87,12 @@ export default function App() {
   const addNewTask = (categoryId, task) => {
     const category = categories[categoryId];
     const newItems = [...category.items, task];
+
+    // Set updated item list, in the target category
     setCategories({
       ...categories,
-      [categoryId]: {
+      // Add to the list of items for that categor
+      [categoryId]: {  
         ...category,
         items: newItems,
       },

@@ -4,15 +4,23 @@ import Task from './Task';
 import TaskModal from './taskModal';
 import TaskDetailsModal from './taskDetailsModal';
 import { api } from '../utils/api';
+import { useSelector, useDispatch } from 'react-redux';
+import { setTask } from '../reducers/taskSlice';
 
 
 export default function Category({ category, categoryId, addNewTask, removeTask, editTask }) {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
+  
+  // access specific task state, in editing its property values
+  const ntask = useSelector(state => state.tasks.task);
+  const dispatch = useDispatch();
+
+
+  const [isModalOpen, setModalOpen] = useState(false);    // Creating a new task (popup box)
+  //const [selectedTask, setSelectedTask] = useState(null); // Identifies already created task and you click on the edit button -> edit details
 
   // TITLE EDITS =========================================
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(category.title); // Initialize with the existing title
+  const [isEditing, setIsEditing] = useState(false);              // Currently editing Title Name
+  const [editedTitle, setEditedTitle] = useState(category.title); // Sets the Title Name 
 
  
   const handleTitleClick = () => {
@@ -25,7 +33,7 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
 
   const handleTitleKeyPress = async (e) => {
     if (e.key === 'Enter') {
-      // Update the category title on Enter key press
+    // Update the category title on Enter key press
       // You may want to add logic to save the edited title to the backend here
       // For now, we'll update it locally in the state
       setIsEditing(false);
@@ -44,7 +52,7 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
   };
 
   const handleTaskClick = (task) => {
-    setSelectedTask(task);
+    dispatch(setTask(task));
   };
 
   const formatDueDate = (date) => {
@@ -95,18 +103,19 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
   return (
     <div>
         {/* UPDATE TITLE HERE */}
-        {isEditing ? (
-          <input
-            type="text"
-            value={editedTitle}
-            onChange={handleTitleChange}
-            onKeyPress={handleTitleKeyPress}
-            onBlur={() => setIsEditing(false)}
-            className="category-inputTitle center-title-vertically"
-          />
-        ) : (
-          <h2 className="category-title center-title-vertically" onClick={handleTitleClick}>{category.name}</h2>
-        )}
+      {isEditing ? (
+        <input
+          type="text"
+          value={editedTitle}
+          onChange={handleTitleChange}
+          onKeyPress={handleTitleKeyPress}
+          onBlur={() => setIsEditing(false)}
+          className="category-inputTitle center-title-vertically"
+        />
+      ) : (
+        <h2 className="category-title center-title-vertically" onClick={handleTitleClick}>{category.name}</h2>
+      )}
+      
       <Droppable droppableId={String(categoryId)} key={categoryId}>
         {(provided, snapshot) => (
           <div
@@ -128,9 +137,9 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
             ))}
             {provided.placeholder}
             <TaskDetailsModal
-              isOpen={!!selectedTask}
-              onClose={() => setSelectedTask(null)}
-              task={selectedTask}
+              isOpen={!!ntask}
+              onClose={() => dispatch(setTask(null))}
+              task={ntask}
               editTask={handleTaskEdit}
             />
           </div>

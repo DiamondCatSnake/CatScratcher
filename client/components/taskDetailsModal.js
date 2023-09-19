@@ -2,6 +2,9 @@ import React from 'react';
 //POPUP OF TASK ON CLICK OF TASK
 export default function TaskDetailsModal({ isOpen, onClose, task, editTask }) {
   if (!isOpen) return null;
+  console.log(task, "taskDetailsModal Task");
+  console.log(task.Assignee, "taskDetailsModal ASSIGNEE");
+
 
   return (
     <div className='modal'>
