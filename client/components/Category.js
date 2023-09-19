@@ -16,7 +16,7 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
 
 
   const [isModalOpen, setModalOpen] = useState(false);    // Creating a new task (popup box)
-  //const [selectedTask, setSelectedTask] = useState(null); // Identifies already created task and you click on the edit button -> edit details
+  const [selectedTask, setSelectedTask] = useState(null); // Identifies already created task and you click on the edit button -> edit details
 
   // TITLE EDITS =========================================
   const [isEditing, setIsEditing] = useState(false);              // Currently editing Title Name
