@@ -10,7 +10,7 @@ const app = express();
 // connect with mongoose database
 mongoose
   .connect(
-    'mongodb://localhost/armScratcher',
+    'mongodb+srv://nathanpagbayani:ARMSCRATCHER@cluster0.j9ysnvo.mongodb.net/?retryWrites=true&w=majority',
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -29,7 +29,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //statically serve everything in dist folder on static call
-app.use(express.static(path.join(__dirname, '../dist')));
+// app.use(express.static(path.join(__dirname, '../dist')));
+
+//Handle Multiple Routes to different page
+app.get('*', (req, res) => {
+  return res.status(200).sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
 app.use('/stylesheets', express.static(path.join(__dirname, '../client/stylesheets'))); 
 
 //Router to serve middleware & response
