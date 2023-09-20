@@ -5,13 +5,13 @@ import TaskModal from './taskModal';
 import TaskDetailsModal from './taskDetailsModal';
 import { api } from '../utils/api';
 import { useSelector, useDispatch } from 'react-redux';
-import { setTask } from '../reducers/taskSlice';
+import { addNewTask, removeTask } from '../reducers/categorySlice';
 
 
-export default function Category({ category, categoryId, addNewTask, removeTask, editTask }) {
+export default function Category({ category, categoryId, editTask }) {
   
   // access specific task state, in editing its property values
-  const ntask = useSelector(state => state.tasks.task);
+  // const ntask = useSelector(state => state.tasks.task);
   const dispatch = useDispatch();
 
 
@@ -52,7 +52,7 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
   };
 
   const handleTaskClick = (task) => {
-    dispatch(setTask(task));
+    setSelectedTask(task);
   };
 
   const formatDueDate = (date) => {
@@ -79,7 +79,8 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
     const newTask = await api.createTask(taskData);
 
     if (newTask) {
-      addNewTask(categoryId, newTask);
+      const obj = {categoryId, newTask};
+      dispatch(addNewTask(obj));
       handleCloseModal();
     }
   };
@@ -87,7 +88,8 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
   const handleTaskRemove = async (taskData) => {
     const removedTask = await api.removeTask({_id: taskData});
     if (removedTask){
-      removeTask(categoryId, removedTask);
+      const obj = {categoryId, id: taskData};
+      dispatch(removeTask(obj));
       handleCloseModal();
     }
   };
@@ -97,8 +99,10 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
     if (edittedTask){
       editTask(categoryId, edittedTask);
     }
-
   };
+  const handleCloseDetailsModal = () => {
+    setSelectedTask(null);
+  }
 
   return (
     <div>
@@ -137,9 +141,9 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
             ))}
             {provided.placeholder}
             <TaskDetailsModal
-              isOpen={!!ntask}
-              onClose={() => dispatch(setTask(null))}
-              task={ntask}
+              isOpen={!!selectedTask}
+              onClose={handleCloseDetailsModal}
+              task={selectedTask}
               editTask={handleTaskEdit}
             />
           </div>

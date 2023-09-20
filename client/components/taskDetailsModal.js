@@ -2,9 +2,9 @@ import React from 'react';
 //POPUP OF TASK ON CLICK OF TASK
 export default function TaskDetailsModal({ isOpen, onClose, task, editTask }) {
   if (!isOpen) return null;
+  
   console.log(task, "taskDetailsModal Task");
   console.log(task.Assignee, "taskDetailsModal ASSIGNEE");
-
 
   return (
     <div className='modal'>
@@ -13,7 +13,7 @@ export default function TaskDetailsModal({ isOpen, onClose, task, editTask }) {
           <h2>{task.Task_Name}</h2>
           <button className='taskPopupButton'  onClick={() => editTask(task.Task_Name)}>Edit</button>
         </div>
-        
+
         <div className='popContent'>
           <strong>Assignee: <span className='content'>{task.Assignee.join(', ')}</span></strong>
           <strong>Due Date: <span className='content'>{task.Due_Date}</span></strong>
