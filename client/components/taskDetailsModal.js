@@ -26,7 +26,7 @@ export default function TaskDetailsModal({ isOpen, onClose, task, onSubmit }) {
         <form className='createForm' onSubmit={onSubmit}>
           <div className='popContent'>
             <strong>Assignee: <input name='Assignee' type = 'text' placeholder = {task.Assignee} defaultValue={task.Assignee}/></strong> 
-            <strong>Due Date: <input name='Due_Date' type = 'date'/><span>{task.Due_Date}</span></strong>
+            <strong>Due Date: <input name='Due_Date' type = 'date' defaultValue = {task.Due_Date}/><span>{task.Due_Date}</span></strong>
             <strong>Priority: <input name='Priority' type = 'text' placeholder = {task.Priority} defaultValue={task.Priority}/></strong> 
             <strong>Status: <input name = 'Status' type = 'text' placeholder = {task.Status} defaultValue={task.Status}/></strong>
             <strong>Description: <input name = 'Description' type='text' placeholder = {task.Description} defaultValue={task.Description}/></strong>

@@ -38,8 +38,6 @@ export default function Category({ category, categoryId}) {
       // For now, we'll update it locally in the state
       dispatch(updateTitle(categoryId));
       setIsEditing(false);
-      // dispatch boolean
-      // dispatch newName
     }
   };
 
@@ -117,12 +115,6 @@ export default function Category({ category, categoryId}) {
     }
   };
   
-  // const handleTaskEdit = async (taskData) => {
-  //   const edittedTask = await api.editTask({Task_Name: taskData});
-  //   if (edittedTask){
-  //     // editTask(categoryId, edittedTask);
-  //   }
-  // };
   const handleCloseDetailsModal = () => {
     setSelectedTask(null);
   };
