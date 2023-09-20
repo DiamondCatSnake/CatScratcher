@@ -62,8 +62,7 @@ export const api = {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        taskData, categoryId}),
+      body: JSON.stringify(taskData),
     });
     return await response.json();
   },

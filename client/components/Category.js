@@ -108,7 +108,7 @@ export default function Category({ category, categoryId}) {
     const newTask = await api.createTask(taskData, categoryId);
 
     if (newTask) {
-      const obj = {categoryIdk};
+      const obj = {categoryId};
       dispatch(addNewTask(obj));
       handleCloseModal();
     }
@@ -150,6 +150,7 @@ export default function Category({ category, categoryId}) {
         </div> 
       )}
       
+      {/* Initializes droppable ID */}
       <Droppable droppableId={String(categoryId)} key={categoryId}>
         {(provided, snapshot) => (
           <div

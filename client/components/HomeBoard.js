@@ -18,6 +18,8 @@ export default function HomeBoard() {
 
   console.log('Testing category', ncategories)
 
+
+  // SOURCE & DESTINATION => Dragging between Categories 
   const onDragEnd = (result, users, setUsers) => {
     // Destructure the source and destination from the result object
     const { source, destination } = result;
