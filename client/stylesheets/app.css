@@ -254,6 +254,7 @@ button:hover {
   display: flex; /* Display as flex container */
   align-items: center; /* Vertically center items */
   /* justify-content: space-between; Space between title and length */
+  color: white;
 }
 
 .center-title-vertically {
@@ -261,6 +262,7 @@ button:hover {
   /* flex-direction: column; */
   align-items: center;
   /* justify-content: center;  */
+  color: black;
 }
 
 .category-title-length {
@@ -273,4 +275,5 @@ button:hover {
   display: flex;
   align-items:center;
   justify-content: center;
+  color:black;
 }

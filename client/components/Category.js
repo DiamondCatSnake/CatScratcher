@@ -133,8 +133,11 @@ export default function Category({ category, categoryId}) {
         />
       ) : (
         <div className='center-title-vertically'>
-          <div className="category-title" onClick={handleTitleClick}>{category.name}
-            <div className='category-title-length' >{category.items.length}</div>
+          <div className="category-title" onClick={handleTitleClick}>
+              <span style={{ color: 'white' }}>{category.name}</span>
+            <div className='category-title-length' >
+              <span style={{ color: 'black' }}>{category.items.length}</span>
+            </div>
           </div>
         </div> 
       )}
