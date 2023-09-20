@@ -3,7 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 const initialState = {
   categories: {}, // {categoryid: {category, items: []}}
-  task: {}
+  task: {},
+  isEditingTitle: false,
+  titleChange: '',
 };
 
 // 1. when add a task
@@ -46,7 +48,7 @@ export const categorySlice = createSlice({
       const category = state.categories[action.payload.categoryId];
       const newTaskId = action.payload.taskData._id;
 
-      for (let i = 0; i< category.items.length; i++) {
+      for (let i = 0; i < category.items.length; i++) {
         if(category.items[i]._id === newTaskId) {
           category.items[i] = action.payload.taskData;
         }
@@ -64,11 +66,27 @@ export const categorySlice = createSlice({
         }
       };
     },
+    
+    // editing boolean
+    setIsEditingTitle: (state, action) => {
+      state.isEditingTitle = action.payload;
+    },
+    
+    // live edit changes
+    editTitle: (state, action) => {
+      state.titleChange = action.payload;
+    },
+
+    // categoryId = action.payload
+    updateTitle: (state, action) => {
+      const category = state.categories[action.payload];
+      category.name = state.titleChange;
+    }
   }
 });
 // dispatch -> reducerfunction(parameter)
 // dispatch(setPlot('String'))
 
-export const { addNewTask, dragInCategory, removeTask, addNewCategory, editTask } = categorySlice.actions;
+export const { addNewTask, dragInCategory, removeTask, addNewCategory, editTask, editTitle, updateTitle, setIsEditingTitle } = categorySlice.actions;
 
 export default categorySlice.reducer;
