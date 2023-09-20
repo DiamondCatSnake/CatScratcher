@@ -3,6 +3,7 @@ import React from 'react';
 export default function TaskModal({ isOpen, onClose, onSubmit }) {
   if (!isOpen) return null;
 
+
   return (
     <div className='modal'>
       <div className='modal-content'>
@@ -16,7 +17,7 @@ export default function TaskModal({ isOpen, onClose, onSubmit }) {
           </div>
           <div className='column'>
             <label>Due Date: </label>
-            <input name='Due_Date' type='date' />
+            <input name='Due_Date' type='date' defaultValue = {new Date().toISOString().split('T')[0]}/>
             <input name='Status' placeholder='Status' />
             <textarea name='Description' placeholder='Description'></textarea>
           </div>
