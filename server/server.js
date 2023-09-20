@@ -1,8 +1,10 @@
 const router = require('./routes/Router');
+const SignupRouter = require('./routes/SignupRouter');
 const mongoose = require('mongoose');
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const PORT = 3000;
 const app = express();
@@ -27,9 +29,10 @@ mongoose
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 //statically serve everything in dist folder on static call
-// app.use(express.static(path.join(__dirname, '../dist')));
+//app.use(express.static(path.join(__dirname, '../dist')));
 
 //Handle Multiple Routes to different page
 app.get('*', (req, res) => {
@@ -41,8 +44,14 @@ app.use('/stylesheets', express.static(path.join(__dirname, '../client/styleshee
 //Router to serve middleware & response
 app.use('/route', router);
 
-//Global error handler
+//Router to serve signup 
+app.use('/userAccess', SignupRouter);
+
+
+//Catch all
 app.use((req, res) => res.status(404).send('Status Code 404: Page not found...'));
+
+//Global Error Handler
 app.use((err, req, res, next) => {
   const defaultErr = {
     log: 'Express error handler caught unknown middleware error',
