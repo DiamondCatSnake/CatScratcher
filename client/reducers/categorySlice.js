@@ -22,7 +22,6 @@ export const categorySlice = createSlice({
       category.items.push(action.payload.newTask);
     },
     
-
     dragInCategory: (state, action) => {
       const sourceCategory = state.categories[action.payload.source.droppableId];
       const destCategory = state.categories[action.payload.dest.droppableId];
@@ -58,6 +57,7 @@ export const categorySlice = createSlice({
     addNewCategory: (state, action) => {
       console.log("CLICKED");
       const newId = uuidv4();
+      console.log("SLICE'S CATEGORY ID", newId);
       state.categories = {
         ...state.categories,
         [newId]: {

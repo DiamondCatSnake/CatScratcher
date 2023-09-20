@@ -25,10 +25,12 @@ taskController.addTask = async (req, res, next) => {
     Status,
     Description,
     Category
-  } = req.body;
+  } = req.body.taskData;
+
+  const {categoryId} = req.body;
 
   try {
-    const task = await Task.create({Task_Name, Assignee, Due_Date, Priority, Status, Description, Category});
+    const task = await Task.create({categoryId, Task_Name, Assignee, Due_Date, Priority, Status, Description, Category});
     res.locals.task = task;
     return next();
   } catch (err) {

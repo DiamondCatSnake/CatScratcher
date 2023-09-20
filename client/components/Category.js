@@ -38,6 +38,12 @@ export default function Category({ category, categoryId}) {
       // For now, we'll update it locally in the state
       dispatch(updateTitle(categoryId));
       setIsEditing(false);
+
+      // Prepare the data to send to the API
+      const updatedCategoryData = {
+        categoryId: categoryId,
+        category: title,
+      };
     }
   };
 
@@ -88,6 +94,7 @@ export default function Category({ category, categoryId}) {
     handleCloseDetailsModal();
   };
 
+  // Newly Created Task
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
@@ -97,10 +104,11 @@ export default function Category({ category, categoryId}) {
     });
 
     // Send the taskData to the backend:
-    const newTask = await api.createTask(taskData);
+    
+    const newTask = await api.createTask(taskData, categoryId);
 
     if (newTask) {
-      const obj = {categoryId, newTask};
+      const obj = {categoryIdk};
       dispatch(addNewTask(obj));
       handleCloseModal();
     }
@@ -134,7 +142,7 @@ export default function Category({ category, categoryId}) {
       ) : (
         <div className='center-title-vertically'>
           <div className="category-title" onClick={handleTitleClick}>
-              <span style={{ color: 'white' }}>{category.name}</span>
+            <span style={{ color: 'white' }}>{category.name}</span>
             <div className='category-title-length' >
               <span style={{ color: 'black' }}>{category.items.length}</span>
             </div>

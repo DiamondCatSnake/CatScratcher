@@ -7,6 +7,8 @@ import Users from './Users';
 import Login from './login';
 import { useSelector, useDispatch } from 'react-redux';
 import { addNewCategory, dragInCategory } from '../reducers/categorySlice';
+import { api } from '../utils/api';
+
 
 
 export default function HomeBoard() {
@@ -14,6 +16,7 @@ export default function HomeBoard() {
   const ncategories = useSelector(state => state.categories.categories);
   const dispatch = useDispatch();
 
+  console.log('Testing category', ncategories)
 
   const onDragEnd = (result, users, setUsers) => {
     // Destructure the source and destination from the result object
@@ -58,7 +61,6 @@ export default function HomeBoard() {
     });
   };
   
-
   const removeUser = (userId) => {
     setUsers((prevUsers) => {
       const updatedUsers = prevUsers.filter((user) => user._id !== userId);
@@ -68,18 +70,19 @@ export default function HomeBoard() {
     });
   };
 
-  // const editTask = (categoryId, edittedTask) => {
-  //   const category = categories[categoryId];
-  //   const newItems = edittedTask;
+  const handleAddCategory = async () => {
+    try {
+      dispatch(addNewCategory());
 
-  //   setCategories({
-  //     ...categories,
-  //     [categoryId]: {
-  //       ...category,
-  //       items: newItems,
-  //     },
-  //   });
-  // };
+      const categoryArray = Object.values(ncategories);
+      const lastCat = categoryArray[categoryArray.length - 1];
+      await api.createCategory({ category: lastCat });
+    
+    } catch (error) {
+      console.error('Error creating category:', error);
+    }
+
+  }
 
   return (
     <div className='app'>
@@ -92,7 +95,7 @@ export default function HomeBoard() {
             <Category key={id} categoryId={id} category={category}/>
           ))}
           <div className='add-category-container'>
-            <button onClick={() => dispatch(addNewCategory())} className="add-category-button"> + New Section</button>
+            <button onClick={(handleAddCategory)} className="add-category-button"> + New Section</button>
           </div>
         </div>
       </DragDropContext>

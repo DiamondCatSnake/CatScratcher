@@ -56,13 +56,14 @@ export const api = {
     return await response.json();
   },
 
-  createTask: async (taskData) => {
+  createTask: async (taskData, categoryId) => {
     const response = await fetch(`${BASE_URL}/route/task`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(taskData),
+      body: JSON.stringify({
+        taskData, categoryId}),
     });
     return await response.json();
   },
