@@ -5,10 +5,10 @@ import TaskModal from './taskModal';
 import TaskDetailsModal from './taskDetailsModal';
 import { api } from '../utils/api';
 import { useSelector, useDispatch } from 'react-redux';
-import { addNewTask, removeTask } from '../reducers/categorySlice';
+import { addNewTask, removeTask, editTask } from '../reducers/categorySlice';
 
 
-export default function Category({ category, categoryId, editTask }) {
+export default function Category({ category, categoryId}) {
   
   // access specific task state, in editing its property values
   // const ntask = useSelector(state => state.tasks.task);
@@ -67,6 +67,21 @@ export default function Category({ category, categoryId, editTask }) {
 
   };
 
+  const handleEditFormSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const taskData = {};
+    formData.forEach((value, key) => {
+      taskData[key] = value;
+    });
+    taskData._id = selectedTask._id;
+    taskData.Task_Name = selectedTask.Task_Name;
+    console.log("EDITED TASK DATA",taskData);
+    const obj = {categoryId, taskData};
+    dispatch(editTask(obj));
+    handleCloseDetailsModal();
+  };
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
@@ -94,12 +109,12 @@ export default function Category({ category, categoryId, editTask }) {
     }
   };
   
-  const handleTaskEdit = async (taskData) => {
-    const edittedTask = await api.editTask({Task_Name: taskData});
-    if (edittedTask){
-      editTask(categoryId, edittedTask);
-    }
-  };
+  // const handleTaskEdit = async (taskData) => {
+  //   const edittedTask = await api.editTask({Task_Name: taskData});
+  //   if (edittedTask){
+  //     // editTask(categoryId, edittedTask);
+  //   }
+  // };
   const handleCloseDetailsModal = () => {
     setSelectedTask(null);
   }
@@ -144,7 +159,7 @@ export default function Category({ category, categoryId, editTask }) {
               isOpen={!!selectedTask}
               onClose={handleCloseDetailsModal}
               task={selectedTask}
-              editTask={handleTaskEdit}
+              onSubmit={handleEditFormSubmit}
             />
           </div>
         )}

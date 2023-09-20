@@ -17,16 +17,7 @@ export const categorySlice = createSlice({
   reducers: {
     addNewTask: (state, action) => {
       const category = state.categories[action.payload.categoryId];
-      const newItems = [...category.items, action.payload.newTask];
-      console.log(action.payload.newTask)
-
-      state.categories = {
-        ...state.categories,
-        [action.payload.categoryId]: {
-          ...category,
-          items: newItems,
-        }
-      }
+      category.items.push(action.payload.newTask);
     },
     
 
@@ -51,7 +42,15 @@ export const categorySlice = createSlice({
     },
     
     editTask: (state, action) => {
+      //const obj = {categoryId, taskData};
+      const category = state.categories[action.payload.categoryId];
+      const newTaskId = action.payload.taskData._id;
 
+      for (let i = 0; i< category.items.length; i++) {
+        if(category.items[i]._id === newTaskId) {
+          category.items[i] = action.payload.taskData;
+        }
+      }
     },
     
     addNewCategory: (state, action) => {

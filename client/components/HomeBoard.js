@@ -68,18 +68,18 @@ export default function HomeBoard() {
     });
   };
 
-  const editTask = (categoryId, edittedTask) => {
-    const category = categories[categoryId];
-    const newItems = edittedTask;
+  // const editTask = (categoryId, edittedTask) => {
+  //   const category = categories[categoryId];
+  //   const newItems = edittedTask;
 
-    setCategories({
-      ...categories,
-      [categoryId]: {
-        ...category,
-        items: newItems,
-      },
-    });
-  };
+  //   setCategories({
+  //     ...categories,
+  //     [categoryId]: {
+  //       ...category,
+  //       items: newItems,
+  //     },
+  //   });
+  // };
 
   return (
     <div className='app'>
@@ -89,7 +89,7 @@ export default function HomeBoard() {
         <div className='categories-container'>
           <Users userId={'usersCategory'} users={users} addNewUser={addNewUser} removeUser={removeUser} />
           {Object.entries(ncategories).map(([id, category]) => (
-            <Category key={id} categoryId={id} category={category} editTask={editTask}/>
+            <Category key={id} categoryId={id} category={category}/>
           ))}
           <div className='add-category-container'>
             <button onClick={() => dispatch(addNewCategory())} className="add-category-button"> + New Section</button>
