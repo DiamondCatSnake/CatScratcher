@@ -59,7 +59,7 @@ export default function Category({ category, categoryId}) {
     const month = dueDate.getMonth() + 1;
     const day = dueDate.getDate() + 1;
     const year = dueDate.getFullYear();
-    return `${year}-${month}-${day}`;
+    return `${month}-${day}-${year}`;
     //value="2017-06-01"
     //year //month //day
   };
