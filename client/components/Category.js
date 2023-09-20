@@ -4,15 +4,23 @@ import Task from './Task';
 import TaskModal from './taskModal';
 import TaskDetailsModal from './taskDetailsModal';
 import { api } from '../utils/api';
+import { useSelector, useDispatch } from 'react-redux';
+import { addNewTask, removeTask, editTask, editTitle, updateTitle, setIsEditingTitle } from '../reducers/categorySlice';
 
 
-export default function Category({ category, categoryId, addNewTask, removeTask, editTask }) {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
+export default function Category({ category, categoryId}) {
+  const title = useSelector(state => state.categories.categories[categoryId].name);
+  const categoryTasks = useSelector(state => state.categories.categories[categoryId].items);
+  const isEditingTitle = useSelector(state => state.categories.isEditingTitle);
 
-  // TITLE EDITS =========================================
+  // access specific task state, in editing its property values
+  // const ntask = useSelector(state => state.tasks.task);
+  const dispatch = useDispatch();
+
+  const [isModalOpen, setModalOpen] = useState(false);    // Creating a new task (popup box)
+  const [selectedTask, setSelectedTask] = useState(null); // Identifies already created task and you click on the edit button -> edit details
+
   const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(category.title); // Initialize with the existing title
 
  
   const handleTitleClick = () => {
@@ -20,20 +28,18 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
   };
 
   const handleTitleChange = (e) => {
-    setEditedTitle(e.target.value);
+    dispatch(editTitle(e.target.value));
   };
 
   const handleTitleKeyPress = async (e) => {
     if (e.key === 'Enter') {
-      // Update the category title on Enter key press
+    // Update the category title on Enter key press
       // You may want to add logic to save the edited title to the backend here
       // For now, we'll update it locally in the state
+      dispatch(updateTitle(categoryId));
       setIsEditing(false);
-      category.name = editedTitle;
     }
   };
-  // TITLE EDITS =========================================
-
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -49,14 +55,37 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
 
   const formatDueDate = (date) => {
     if (!date) return '';
-
     const dueDate = new Date(date);
     const month = dueDate.getMonth() + 1;
-    const day = dueDate.getDate();
+    const day = dueDate.getDate() + 1;
     const year = dueDate.getFullYear();
+    return `${year}-${month}-${day}`;
+    //value="2017-06-01"
+    //year //month //day
+  };
 
-    return `${month}-${day}-${year}`;
-
+  const handleEditFormSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const taskData = {};
+    taskData._id = selectedTask._id;
+    taskData.Task_Name = selectedTask.Task_Name;
+    formData.forEach((value, key) => {
+      if (key === 'Due_Date' && value === "") {
+        // get the specific task 
+        for (const task of categoryTasks) {
+          if (task._id === taskData._id) {    
+            taskData[key] = task.Due_Date;
+          }
+        }
+      } else {
+        taskData[key] = value;
+      }
+    });
+    console.log("EDITED TASK DATA",taskData);
+    const obj = {categoryId, taskData};
+    dispatch(editTask(obj));
+    handleCloseDetailsModal();
   };
 
   const handleFormSubmit = async (event) => {
@@ -71,7 +100,8 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
     const newTask = await api.createTask(taskData);
 
     if (newTask) {
-      addNewTask(categoryId, newTask);
+      const obj = {categoryId, newTask};
+      dispatch(addNewTask(obj));
       handleCloseModal();
     }
   };
@@ -79,34 +109,36 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
   const handleTaskRemove = async (taskData) => {
     const removedTask = await api.removeTask({_id: taskData});
     if (removedTask){
-      removeTask(categoryId, removedTask);
+      const obj = {categoryId, id: taskData};
+      dispatch(removeTask(obj));
       handleCloseModal();
     }
   };
   
-  const handleTaskEdit = async (taskData) => {
-    const edittedTask = await api.editTask({Task_Name: taskData});
-    if (edittedTask){
-      editTask(categoryId, edittedTask);
-    }
-
+  const handleCloseDetailsModal = () => {
+    setSelectedTask(null);
   };
 
   return (
     <div>
-        {/* UPDATE TITLE HERE */}
-        {isEditing ? (
-          <input
-            type="text"
-            value={editedTitle}
-            onChange={handleTitleChange}
-            onKeyPress={handleTitleKeyPress}
-            onBlur={() => setIsEditing(false)}
-            className="category-inputTitle center-title-vertically"
-          />
-        ) : (
-          <h2 className="category-title center-title-vertically" onClick={handleTitleClick}>{category.name}</h2>
-        )}
+      {/* UPDATE TITLE HERE */}
+      {isEditing ? (
+        <input
+          type="text"
+          defaultValue={title}
+          onChange={handleTitleChange}
+          onKeyPress={handleTitleKeyPress}
+          onBlur={() => setIsEditing(false)}
+          className="category-inputTitle center-title-vertically"
+        />
+      ) : (
+        <div className='center-title-vertically'>
+          <div className="category-title" onClick={handleTitleClick}>{category.name}
+            <div className='category-title-length' >{category.items.length}</div>
+          </div>
+        </div> 
+      )}
+      
       <Droppable droppableId={String(categoryId)} key={categoryId}>
         {(provided, snapshot) => (
           <div
@@ -118,7 +150,7 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
               width: 250,
               minHeight: 500,
               backgroundColor: '#FFFFF',
-              borderRadius: '10px',
+              borderRadius: '0 0 10px 10px',
               border: '1px solid #ccc', 
             }}
             className='columnShadow'
@@ -129,9 +161,9 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
             {provided.placeholder}
             <TaskDetailsModal
               isOpen={!!selectedTask}
-              onClose={() => setSelectedTask(null)}
+              onClose={handleCloseDetailsModal}
               task={selectedTask}
-              editTask={handleTaskEdit}
+              onSubmit={handleEditFormSubmit}
             />
           </div>
         )}
@@ -141,3 +173,5 @@ export default function Category({ category, categoryId, addNewTask, removeTask,
     </div>
   );
 }
+
+

@@ -5,96 +5,48 @@ import { Routes, Route, Link } from 'react-router-dom';
 import Category from './Category';
 import Users from './Users';
 import Login from './login';
+import { useSelector, useDispatch } from 'react-redux';
+import { addNewCategory, dragInCategory } from '../reducers/categorySlice';
 
-const initialCategories = {
-  [uuidv4()]: {
-    name: 'Todo',
-    items: [],
-  },
-};
-
-const onDragEnd = (result, categories, setCategories, users, setUsers) => {
-  const { source, destination } = result;
-
-  // Checks if item was dropped outside of the droppable environment
-  if (!destination) return;
-
-  if (source.droppableId === 'usersCategory') {
-    console.log('all users: ', users);
-    const copiedUsers = [...users];
-    console.log(copiedUsers);
-    const [removed] = copiedUsers.splice(source.index, 1);
-    copiedUsers.splice(destination.index, 0, removed);
-
-    setUsers(copiedUsers);
-  } else if (source.droppableId === destination.droppableId) {
-    // Reordering tasks within the same category
-    const category = categories[source.droppableId];
-    console.log(categories);
-    console.log(categories[source.droppableId]);
-    const copiedItems = [...category.items];
-    console.log([...category.items]);
-    const [removed] = copiedItems.splice(source.index, 1);
-    copiedItems.splice(destination.index, 0, removed);
-
-    setCategories({
-      ...categories,
-      [source.droppableId]: {
-        ...category,
-        items: copiedItems,
-      },
-    });
-  } else {
-    // Moving tasks between different categories
-    console.log(source);
-    console.log(destination);
-    const sourceCategory = categories[source.droppableId];
-    const destCategory = categories[destination.droppableId];
-    const sourceItems = [...sourceCategory.items];
-    const destItems = [...destCategory.items];
-    const [removed] = sourceItems.splice(source.index, 1);
-    destItems.splice(destination.index, 0, removed);
-
-    setCategories({
-      ...categories,
-      [source.droppableId]: {
-        ...sourceCategory,
-        items: sourceItems,
-      },
-      [destination.droppableId]: {
-        ...destCategory,
-        items: destItems,
-      },
-    });
-  }
-};
 
 export default function HomeBoard() {
-  const [categories, setCategories] = useState(initialCategories);
   const [users, setUsers] = useState([]);
+  const ncategories = useSelector(state => state.categories.categories);
+  const dispatch = useDispatch();
 
-  const addNewCategory = () => {
-    const newId = uuidv4();
-    setCategories({
-      ...categories,
-      [newId]: {
-        name: 'New Category',
-        items: [],
-      },
-    });
-  };
 
-  const addNewTask = (categoryId, task) => {
-    const category = categories[categoryId];
-    const newItems = [...category.items, task];
-    setCategories({
-      ...categories,
-      [categoryId]: {
-        ...category,
-        items: newItems,
-      },
-    });
-  };
+  const onDragEnd = (result, users, setUsers) => {
+    // Destructure the source and destination from the result object
+    const { source, destination } = result;
+
+    // Checks if item was dropped outside of the droppable environment
+    if (!destination) return;
+
+    // If the dragged item is from the 'usersCategory' droppable
+    if (source.droppableId === 'usersCategory') {
+      // Log the list of all users
+      console.log('all users: ', users);
+
+      // Create a copy of the users array
+      const copiedUsers = [...users];
+      console.log(copiedUsers);
+
+      // Remove the user from the source index
+      const [removed] = copiedUsers.splice(source.index, 1);
+
+      // Insert the removed user at the destination index
+      copiedUsers.splice(destination.index, 0, removed);
+
+      // Update the state with the new users array
+      setUsers(copiedUsers);
+
+      // DISPATCH 
+    } else {
+      const obj = {source, dest: destination}
+      dispatch(dragInCategory(obj));
+    }
+  }
+    
 
   const addNewUser = (user) => {
     // console.log('New user:', user);
@@ -106,18 +58,6 @@ export default function HomeBoard() {
     });
   };
   
-  const removeTask = (categoryId, removeTask) => {
-    const category = categories[categoryId];
-    const newItems = [];
-
-    setCategories({
-      ...categories,
-      [categoryId]: {
-        ...category,
-        items: newItems,
-      },
-    });
-  };
 
   const removeUser = (userId) => {
     setUsers((prevUsers) => {
@@ -128,35 +68,37 @@ export default function HomeBoard() {
     });
   };
 
-  const editTask = (categoryId, edittedTask) => {
-    const category = categories[categoryId];
-    const newItems = edittedTask;
+  // const editTask = (categoryId, edittedTask) => {
+  //   const category = categories[categoryId];
+  //   const newItems = edittedTask;
 
-    setCategories({
-      ...categories,
-      [categoryId]: {
-        ...category,
-        items: newItems,
-      },
-    });
-  };
+  //   setCategories({
+  //     ...categories,
+  //     [categoryId]: {
+  //       ...category,
+  //       items: newItems,
+  //     },
+  //   });
+  // };
 
   return (
     <div className='app'>
-  
-        <DragDropContext
-          onDragEnd={(result) => onDragEnd(result, categories, setCategories, users, setUsers)}
-        >
-          <div className='categories-container'>
-            <Users userId={'usersCategory'} users={users} addNewUser={addNewUser} removeUser={removeUser} />
-            {Object.entries(categories).map(([id, category]) => (
-              <Category key={id} categoryId={id} category={category} addNewTask={addNewTask} removeTask={removeTask} editTask={editTask}/>
-            ))}
-            <div className='add-category-container'>
-              <button onClick={addNewCategory} className="add-category-button"> + New Section</button>
-            </div>
+      <DragDropContext
+        onDragEnd={(result) => onDragEnd(result, users, setUsers)}
+      >
+        <div className='categories-container'>
+          <Users userId={'usersCategory'} users={users} addNewUser={addNewUser} removeUser={removeUser} />
+          {Object.entries(ncategories).map(([id, category]) => (
+            <Category key={id} categoryId={id} category={category}/>
+          ))}
+          <div className='add-category-container'>
+            <button onClick={() => dispatch(addNewCategory())} className="add-category-button"> + New Section</button>
           </div>
-        </DragDropContext>
+        </div>
+      </DragDropContext>
     </div>
   );
 }
+
+
+  
