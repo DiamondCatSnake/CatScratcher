@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { v4 as uuidv4 } from 'uuid';
 import { Routes, Route, Link } from 'react-router-dom';
@@ -9,13 +9,53 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addNewCategory, dragInCategory } from '../reducers/categorySlice';
 import { api } from '../utils/api';
 
+/*
+  useEffect(()=>{
+    if (id) {
+      setIsFetching(true);
+      fetch(`/api/${type}?id=${id}`)
+        .then(resp => resp.json())
+        .then(data => {
+          setDetails(data);
+          setIsFetching(false);
+        })
+        .catch(err => console.log('DetailsModal: fetch /api: ERROR: ', err));
+    } else {
+      setDetails({name: 'Unavailable'});
+      setIsFetching(false);
+    }
+  }, [id, type]);
 
+  if (isFetching) {
+    return (
+      <div className="modal" style={position}>
+        <p>Fetching species data...</p>
+      </div>
+    );
+  }
+*/
 export default function HomeBoard() {
   const [users, setUsers] = useState([]);
   const ncategories = useSelector(state => state.categories.categories);
   const dispatch = useDispatch();
+  console.log('Testing category', ncategories);
 
-  console.log('Testing category', ncategories)
+  // useEffect with empty dependency array to fetch
+
+  useEffect( () => {
+    // fetch with correct route
+    fetch('/')
+
+    // send a route paramter that sends the userid -> inside of getTakss we can use that id and find all the tasks
+    // set a route inside Router -> /renderScreen -> getTasks -> send that data back over here
+    
+    //Have another middle ware to store the name and send it back to client
+    // On first mount -> This right after the user logins. So we have access to that userid which is the user logged in
+    // all of Tasks with that userID
+    // 
+  },[]);
+
+
 
   // SOURCE & DESTINATION => Dragging between Categories 
   const onDragEnd = async (result, users, setUsers) => {

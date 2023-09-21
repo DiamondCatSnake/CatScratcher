@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import {Link, useNavigate} from 'react-router-dom';
+import { setUserId,setCategories } from '../reducers/categorySlice';
+import { useDispatch } from 'react-redux';
 
 const login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   //Authentication Login
 
@@ -24,10 +28,13 @@ const login = () => {
       }});
 
     const responseData = await response.json();
-    console.log('response from the login ', responseData)
+
     if (response.status === 200) {
       alert('login successful');
-      console.log(responseData);
+      console.log('responseData',responseData);
+      dispatch(setUserId(responseData.existingUser._id));
+      dispatch(setCategories(responseData.task));
+      navigate('/mainpage');
     } 
     else {
       alert('credentials failed');

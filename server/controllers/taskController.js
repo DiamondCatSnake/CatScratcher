@@ -1,4 +1,6 @@
 const Task = require('../models/taskModel');
+const Category = require('../models/categoryModel');
+
 
 const taskController = {};
 
@@ -24,7 +26,8 @@ taskController.addTask = async (req, res, next) => {
     Priority,
     Status,
     Description,
-    Category
+    Category,
+    User
   } = req.body;
   console.log("TASK CONTROLLER CATEGORY", Category);
   // console.log(req.body.taskData, "REQ BODY TASK");
@@ -33,7 +36,7 @@ taskController.addTask = async (req, res, next) => {
 
   try {
     // const task = await Task.create({categoryId, Task_Name, Assignee, Due_Date, Priority, Status, Description, Category});
-    const task = await Task.create({Task_Name, Assignee, Due_Date, Priority, Status, Description, Category});
+    const task = await Task.create({Task_Name, Assignee, Due_Date, Priority, Status, Description, Category, User});
     res.locals.task = task;
     return next();
   } catch (err) {
@@ -76,6 +79,21 @@ taskController.editTask = async (req, res, next) => {
     });
   }
 
-
 };
+
+taskController.findAllTasks = async (req, res, next) => {
+  try {
+    const tasks = await Task.find({User: res.locals.existingUser._id});
+    res.locals.tasks = tasks;
+    console.log('found some tasks', tasks);
+    return next();
+  }
+  catch (err) {
+    return next({
+      log: 'failed to find tasks',
+      message: {err: `failed to find tasks: ${err}`}
+    });
+  }
+};
+
 module.exports = taskController;

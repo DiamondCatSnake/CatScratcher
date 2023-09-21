@@ -10,6 +10,7 @@ import { addNewTask, removeTask, editTask, editTitle, updateTitle, setIsEditingT
 
 export default function Category({ category, categoryId}) {
   const title = useSelector(state => state.categories.categories[categoryId]);
+  const userId = useSelector(state => state.categories.user_id);
   const categoryTasks = useSelector(state => state.categories.categories[categoryId].items);
   const isEditingTitle = useSelector(state => state.categories.isEditingTitle);
 
@@ -120,6 +121,7 @@ export default function Category({ category, categoryId}) {
 
     // BACKEND ADJUSTMENT TO MATCH TASK SCHEMA MODEL
     taskData.Category = categoryId;
+    taskData.User = userId;
 
     // Send the taskData to the backend:
     // const newTask = await api.createTask(taskData, categoryId);

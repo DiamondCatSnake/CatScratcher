@@ -6,6 +6,7 @@ const initialState = {
   task: {},
   isEditingTitle: false,
   titleChange: '',
+  user_id: ''
 };
 
 // 1. when add a task
@@ -83,6 +84,7 @@ export const categorySlice = createSlice({
     },
 
     // categoryId = action.payload
+    // REFACTOR LATER
     updateTitle: (state, action) => {
       const categoryId = action.payload;
       const newTitle = state.titleChange;
@@ -97,10 +99,27 @@ export const categorySlice = createSlice({
           },
         },
       };
+    },
+
+    setUserId: (state, action) => {
+      state.user_id = action.payload;
+    },
+
+    setCategories: (state, action) => {
+      const tasks = action.payload;
+      const categories = {};
+      for(const task of tasks) {
+        const {Assignee, Description, Priority, Status, Task_Name} = task;
+        const taskObj = {Assignee, Description, Priority, Status, Task_Name};
+        categories[task.Category] = 'hello';
+      }
+      state.categories = {
+
+      }
     }
   }
 });
 
-export const { addNewTask, dragInCategory, removeTask, addNewCategory, editTask, editTitle, updateTitle, setIsEditingTitle } = categorySlice.actions;
+export const { addNewTask, dragInCategory, removeTask, addNewCategory, editTask, editTitle, updateTitle, setIsEditingTitle, setUserId, setCategories } = categorySlice.actions;
 
 export default categorySlice.reducer;
