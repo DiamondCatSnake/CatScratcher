@@ -4,40 +4,19 @@ import { v4 as uuidv4 } from 'uuid';
 import { Routes, Route, Link } from 'react-router-dom';
 import Category from './Category';
 import Users from './Users';
-import Login from './login';
+import { Login }from './login';
 import { useSelector, useDispatch } from 'react-redux';
 import { addNewCategory, dragInCategory } from '../reducers/categorySlice';
 import { api } from '../utils/api';
+import { useNavigate} from 'react-router-dom';
 
-/*
-  useEffect(()=>{
-    if (id) {
-      setIsFetching(true);
-      fetch(`/api/${type}?id=${id}`)
-        .then(resp => resp.json())
-        .then(data => {
-          setDetails(data);
-          setIsFetching(false);
-        })
-        .catch(err => console.log('DetailsModal: fetch /api: ERROR: ', err));
-    } else {
-      setDetails({name: 'Unavailable'});
-      setIsFetching(false);
-    }
-  }, [id, type]);
 
-  if (isFetching) {
-    return (
-      <div className="modal" style={position}>
-        <p>Fetching species data...</p>
-      </div>
-    );
-  }
-*/
+
 export default function HomeBoard() {
   const [users, setUsers] = useState([]);
   const ncategories = useSelector(state => state.categories.categories);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   console.log('Testing category', ncategories);
 
   // useEffect with empty dependency array to fetch
@@ -124,7 +103,6 @@ export default function HomeBoard() {
     });
   };
 
-
   const handleAddCategory = async () => {
     try {
       // Create new Category in MongoDB
@@ -136,11 +114,17 @@ export default function HomeBoard() {
     } catch (error) {
       console.error('Error creating category:', error);
     }
-
   }
+
+  // Logout Function
+  const logout = () => {
+    alert('We imported logout');
+    return navigate('/');
+  };
 
   return (
     <div className='app'>
+      <button onClick={() => logout()}> Testing </button>
       <DragDropContext
         onDragEnd={(result) => onDragEnd(result, users, setUsers)}
       >

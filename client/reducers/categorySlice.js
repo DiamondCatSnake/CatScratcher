@@ -59,7 +59,7 @@ export const categorySlice = createSlice({
       }
     },
 
-     // finished backend
+    // finished backend
     addNewCategory: (state, action) => {
       console.log("CLICKED");
       const newId = action.payload;
