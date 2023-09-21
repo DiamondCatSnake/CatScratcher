@@ -56,7 +56,7 @@ export const categorySlice = createSlice({
     
     addNewCategory: (state, action) => {
       console.log("CLICKED");
-      const newId = uuidv4();
+      const newId = action.payload;
       console.log("SLICE'S CATEGORY ID", newId);
       state.categories = {
         ...state.categories,
@@ -84,8 +84,6 @@ export const categorySlice = createSlice({
     }
   }
 });
-// dispatch -> reducerfunction(parameter)
-// dispatch(setPlot('String'))
 
 export const { addNewTask, dragInCategory, removeTask, addNewCategory, editTask, editTitle, updateTitle, setIsEditingTitle } = categorySlice.actions;
 

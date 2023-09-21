@@ -25,12 +25,15 @@ taskController.addTask = async (req, res, next) => {
     Status,
     Description,
     Category
-  } = req.body.taskData;
+  } = req.body;
+  //   } = req.body.task;
+  console.log(req.body.taskData, "REQ BODY TASK");
 
-  const {categoryId} = req.body;
+  // const {categoryId} = req.body;
 
   try {
-    const task = await Task.create({categoryId, Task_Name, Assignee, Due_Date, Priority, Status, Description, Category});
+    // const task = await Task.create({categoryId, Task_Name, Assignee, Due_Date, Priority, Status, Description, Category});
+    const task = await Task.create({Task_Name, Assignee, Due_Date, Priority, Status, Description, Category});
     res.locals.task = task;
     return next();
   } catch (err) {
@@ -39,7 +42,6 @@ taskController.addTask = async (req, res, next) => {
       message: {err: `failed to create task: ${err}`}
     });
   }
-
 };
 
 

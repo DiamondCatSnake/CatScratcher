@@ -18,7 +18,6 @@ export default function HomeBoard() {
 
   console.log('Testing category', ncategories)
 
-
   // SOURCE & DESTINATION => Dragging between Categories 
   const onDragEnd = (result, users, setUsers) => {
     // Destructure the source and destination from the result object
@@ -72,14 +71,15 @@ export default function HomeBoard() {
     });
   };
 
+
   const handleAddCategory = async () => {
     try {
-      dispatch(addNewCategory());
-
-      const categoryArray = Object.values(ncategories);
-      const lastCat = categoryArray[categoryArray.length - 1];
-      await api.createCategory({ category: lastCat });
-    
+      // Create new Category in MongoDB
+      const response = await api.createCategory({ category: 'New Category' });
+      // retrieve mongo's ID
+      const mongoCategoryId = response._id
+      // dispatch action with mongoDB's categoryID
+      dispatch(addNewCategory(mongoCategoryId));
     } catch (error) {
       console.error('Error creating category:', error);
     }

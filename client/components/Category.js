@@ -104,11 +104,12 @@ export default function Category({ category, categoryId}) {
     });
 
     // Send the taskData to the backend:
-    
-    const newTask = await api.createTask(taskData, categoryId);
-
+    // const newTask = await api.createTask(taskData, categoryId);
+    const newTask = await api.createTask(taskData);
+    console.log(taskData, "ADDED TASK ");
     if (newTask) {
-      const obj = {categoryId};
+      // const obj = {categoryId};
+      const obj = {categoryId, newTask};
       dispatch(addNewTask(obj));
       handleCloseModal();
     }
@@ -149,7 +150,6 @@ export default function Category({ category, categoryId}) {
           </div>
         </div> 
       )}
-      
       {/* Initializes droppable ID */}
       <Droppable droppableId={String(categoryId)} key={categoryId}>
         {(provided, snapshot) => (
