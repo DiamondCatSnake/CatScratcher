@@ -16,14 +16,24 @@ input[type="date"] {
   overflow-x: auto;
   gap: 16px;
 }
+
+
+
 .content{
   font-weight: 100;
   color:rgb(255, 234, 73);
 }
-.createForm {
+/* .createForm {
   display: flex;
   justify-content: space-between;
+  right: 0;
+} */
+.createForm {
+  display: flex;
+  flex-direction: column;
 }
+
+
 .column {
   flex: 1;
   margin-right: 25px; /* Adjust the margin between columns as needed */
@@ -41,14 +51,20 @@ input[type="date"] {
 .modal {
   position: fixed;
   top: 0;
-  left: 0;
+  left:25%;
+  /* right: 0; */
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  height:550px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
+
+.modal.open {
+  width: 100%;
+}
+
 
 .modal-content {
   background-color: #70a4c7;;
@@ -56,7 +72,7 @@ input[type="date"] {
   border-radius: 8px;
   width: 80%;
   max-width: 500px;
-
+  height: 100%   
 }
 
 
@@ -135,9 +151,18 @@ button:hover {
   text-align: center;
 }
 
-.popContent{
+/* .popContent{
   display: flex;
   flex-direction: column;
+  margin: 6px;
+  line-height: 24px;
+  right:0; 
+} */
+
+.popContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   margin: 6px;
   line-height: 24px;
 }
@@ -193,6 +218,11 @@ button:hover {
 /*
   ADD NEW TASK STYLING
 */
+.category-center{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 
 .add-task-input {
@@ -214,6 +244,7 @@ button:hover {
   font-family: 'Bayon', sans-serif;
   font-family: 'Comfortaa', cursive;
   font-weight: bold;
+  align-self: center;
 }
 
 .add-task-button:hover {

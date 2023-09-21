@@ -13,19 +13,16 @@ export default function Category({ category, categoryId}) {
   const categoryTasks = useSelector(state => state.categories.categories[categoryId].items);
   const isEditingTitle = useSelector(state => state.categories.isEditingTitle);
 
-  // useEffect(() => {
-  //   console.log("Redux TITLE CATEGORY NAME (Effect)", title);
-  //   api.editCategory({ _id: categoryId, name: title.name, });
-  // }, [title]);
-
-  // access specific task state, in editing its property values
   const dispatch = useDispatch();
 
   const [isModalOpen, setModalOpen] = useState(false);    // Creating a new task (popup box)
   const [selectedTask, setSelectedTask] = useState(null); // Identifies already created task and you click on the edit button -> edit details
 
   const [isEditing, setIsEditing] = useState(false);
-   
+
+  /*
+    ================ Title Change Handlers ================
+  */
   const handleTitleClick = () => {
     setIsEditing(true);
   };
@@ -47,19 +44,28 @@ export default function Category({ category, categoryId}) {
     }
   };
 
-
+  /*
+  ============= Opening Modal handlers ================
+  */
   const handleOpenModal = () => {
     setModalOpen(true);
   };
-
+  
   const handleCloseModal = () => {
     setModalOpen(false);
   };
-
+  
   const handleTaskClick = (task) => {
     setSelectedTask(task);
   };
+  
+  const handleCloseDetailsModal = () => {
+    setSelectedTask(null);
+  };
 
+    /*
+    ============= Task Form Submit handlers ================
+  */
   const formatDueDate = (date) => {
     if (!date) return '';
     const dueDate = new Date(date);
@@ -89,16 +95,13 @@ export default function Category({ category, categoryId}) {
         }
       }
     }
-  
+    
     // Convert Due_Date to ISO format
     taskData["Due_Date"] = new Date(taskData["Due_Date"]).toISOString();
-
-    console.log("EDITED TASK DATA", taskData);
-  
+    // call API to update database Task
     const editTaskMongo = await api.editTask(taskData);
-  
-    console.log("EDIT TASK MONGO", editTaskMongo);
-  
+    
+    // Update state upon
     if (editTaskMongo) {
       const obj = { categoryId, taskData };
       dispatch(editTask(obj));
@@ -106,7 +109,6 @@ export default function Category({ category, categoryId}) {
     }
   };
   
-
   // Newly Created Task
   const handleFormSubmit = async (event) => {
     event.preventDefault();
@@ -122,16 +124,15 @@ export default function Category({ category, categoryId}) {
     // Send the taskData to the backend:
     // const newTask = await api.createTask(taskData, categoryId);
     const newTask = await api.createTask(taskData);
-    // newTask.Category = 
     console.log(taskData, "ADDED TASK ");
     if (newTask) {
-      // const obj = {categoryId};
       const obj = {categoryId, newTask};
       dispatch(addNewTask(obj));
       handleCloseModal();
     }
   };
 
+  // Delete Task
   const handleTaskRemove = async (taskData) => {
     const removedTask = await api.removeTask({_id: taskData});
     if (removedTask){
@@ -140,13 +141,9 @@ export default function Category({ category, categoryId}) {
       handleCloseModal();
     }
   };
-  
-  const handleCloseDetailsModal = () => {
-    setSelectedTask(null);
-  };
 
   return (
-    <div>
+    <div className="category-center">
       {/* UPDATE TITLE HERE */}
       {isEditing ? (
         <input
@@ -197,7 +194,7 @@ export default function Category({ category, categoryId}) {
           </div>
         )}
       </Droppable>
-      <button onClick={handleOpenModal} className="add-task-button">+ Task</button>
+        <button onClick={handleOpenModal} className="add-task-button">+ Task</button>
       <TaskModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleFormSubmit} />
     </div>
   );
