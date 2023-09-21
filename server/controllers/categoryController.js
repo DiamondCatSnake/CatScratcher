@@ -17,7 +17,7 @@ categoryController.getCategory = async (req, res, next) => {
 
 categoryController.addCategory = async (req, res, next) => {
   const { category } = req.body;
-  console.log('req body category', category);//name of the category// items: []
+  console.log('req body category', category);
 
   try {
     const existingCategory = await Category.findOne({ category: category });
@@ -59,10 +59,10 @@ categoryController.removeCategory = async (req, res, next) => {
 };
 
 categoryController.editCategory = async (req, res, next) => {
-  const {oldCat, newCat} = req.body;
+  const { _id, name } = req.body; // Assuming you send _id and name in the request body
 
   try {
-    const update = await Category.findOneAndUpdate({category: oldCat}, {category: newCat}, {new:true});
+    const update = await Category.findOneAndUpdate({ _id }, { name }, { new: true });
     console.log('updated Category: ', update);
     res.locals.category = update;
     return next();

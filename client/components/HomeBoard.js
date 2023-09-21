@@ -10,7 +10,6 @@ import { addNewCategory, dragInCategory } from '../reducers/categorySlice';
 import { api } from '../utils/api';
 
 
-
 export default function HomeBoard() {
   const [users, setUsers] = useState([]);
   const ncategories = useSelector(state => state.categories.categories);
@@ -19,7 +18,7 @@ export default function HomeBoard() {
   console.log('Testing category', ncategories)
 
   // SOURCE & DESTINATION => Dragging between Categories 
-  const onDragEnd = (result, users, setUsers) => {
+  const onDragEnd = async (result, users, setUsers) => {
     // Destructure the source and destination from the result object
     const { source, destination } = result;
 
@@ -47,10 +46,24 @@ export default function HomeBoard() {
       // DISPATCH 
     } else {
       const obj = {source, dest: destination}
+      console.log("DRAGGABLE ID", result.draggableId);
+      
+      // Get the task ID
+      const taskId = result.draggableId; 
+      // Get the destination category ID
+      const newCategoryId = destination.droppableId; 
+
+
       dispatch(dragInCategory(obj));
+
+      // Update the backend Categories for Source and destination
+      try {
+        await api.editTask({_id: taskId, Category: newCategoryId}); // Set newCategoryId to null for the source category
+      } catch (error) {
+        console.error('Error updating source category:', error);
+      }
     }
-  }
-    
+  };
 
   const addNewUser = (user) => {
     // console.log('New user:', user);
@@ -104,6 +117,3 @@ export default function HomeBoard() {
     </div>
   );
 }
-
-
-  

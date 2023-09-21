@@ -12,25 +12,28 @@ const initialState = {
 // 2. when we drag task onto another category
 // 3. when we change order in task list
 
-
 export const categorySlice = createSlice({
   name: 'categories',
   initialState,
   reducers: {
+
+    // finished backend
     addNewTask: (state, action) => {
       const category = state.categories[action.payload.categoryId];
       category.items.push(action.payload.newTask);
     },
-    
+
+    // finished backend
     dragInCategory: (state, action) => {
       const sourceCategory = state.categories[action.payload.source.droppableId];
       const destCategory = state.categories[action.payload.dest.droppableId];
 
       const [removed] = sourceCategory.items.splice(action.payload.source.index, 1);
+      console.log("REMOVED element", [removed])
       destCategory.items.splice(action.payload.dest.index, 0, removed);
     },
 
-
+    // finished backend
     removeTask: (state, action) => {
       const category = state.categories[action.payload.categoryId];
       const id = action.payload.id;
@@ -41,7 +44,8 @@ export const categorySlice = createSlice({
         }
       }
     },
-    
+
+    // finished backend
     editTask: (state, action) => {
       //const obj = {categoryId, taskData};
       const category = state.categories[action.payload.categoryId];
@@ -53,7 +57,8 @@ export const categorySlice = createSlice({
         }
       }
     },
-    
+
+     // finished backend
     addNewCategory: (state, action) => {
       console.log("CLICKED");
       const newId = action.payload;
@@ -79,8 +84,19 @@ export const categorySlice = createSlice({
 
     // categoryId = action.payload
     updateTitle: (state, action) => {
-      const category = state.categories[action.payload];
-      category.name = state.titleChange;
+      const categoryId = action.payload;
+      const newTitle = state.titleChange;
+      // Create a new state object to trigger Redux update
+      return {
+        ...state,
+        categories: {
+          ...state.categories,
+          [categoryId]: {
+            ...state.categories[categoryId],
+            name: newTitle,
+          },
+        },
+      };
     }
   }
 });

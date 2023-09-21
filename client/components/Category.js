@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 import Task from './Task';
 import TaskModal from './taskModal';
@@ -9,43 +9,44 @@ import { addNewTask, removeTask, editTask, editTitle, updateTitle, setIsEditingT
 
 
 export default function Category({ category, categoryId}) {
-  const title = useSelector(state => state.categories.categories[categoryId].name);
+  const title = useSelector(state => state.categories.categories[categoryId]);
   const categoryTasks = useSelector(state => state.categories.categories[categoryId].items);
   const isEditingTitle = useSelector(state => state.categories.isEditingTitle);
 
+  // useEffect(() => {
+  //   console.log("Redux TITLE CATEGORY NAME (Effect)", title);
+  //   api.editCategory({ _id: categoryId, name: title.name, });
+  // }, [title]);
+
   // access specific task state, in editing its property values
-  // const ntask = useSelector(state => state.tasks.task);
   const dispatch = useDispatch();
 
   const [isModalOpen, setModalOpen] = useState(false);    // Creating a new task (popup box)
   const [selectedTask, setSelectedTask] = useState(null); // Identifies already created task and you click on the edit button -> edit details
 
   const [isEditing, setIsEditing] = useState(false);
-
- 
+   
   const handleTitleClick = () => {
     setIsEditing(true);
   };
 
   const handleTitleChange = (e) => {
     dispatch(editTitle(e.target.value));
+    console.log(e.target.value, "handle title change");
   };
 
   const handleTitleKeyPress = async (e) => {
     if (e.key === 'Enter') {
-    // Update the category title on Enter key press
-      // You may want to add logic to save the edited title to the backend here
-      // For now, we'll update it locally in the state
-      dispatch(updateTitle(categoryId));
-      setIsEditing(false);
-
-      // Prepare the data to send to the API
-      const updatedCategoryData = {
-        categoryId: categoryId,
-        category: title,
-      };
+      try {
+        await dispatch(updateTitle(categoryId));
+        await api.editCategory({ _id: categoryId, name: e.target.value });
+        setIsEditing(false);
+      } catch (error) {
+        console.error("Error updating Redux Category:", error);
+      }
     }
   };
+
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -77,22 +78,34 @@ export default function Category({ category, categoryId}) {
     taskData._id = selectedTask._id;
     taskData.Task_Name = selectedTask.Task_Name;
     formData.forEach((value, key) => {
-      if (key === 'Due_Date' && value === "") {
-        // get the specific task 
-        for (const task of categoryTasks) {
-          if (task._id === taskData._id) {    
-            taskData[key] = task.Due_Date;
-          }
-        }
-      } else {
-        taskData[key] = value;
-      }
+      taskData[key] = value;
     });
-    console.log("EDITED TASK DATA",taskData);
-    const obj = {categoryId, taskData};
-    dispatch(editTask(obj));
-    handleCloseDetailsModal();
+  
+    if (formData.get("Due_Date") === "") {
+      // Get the specific task 
+      for (const task of categoryTasks) {
+        if (task._id === taskData._id) {    
+          taskData["Due_Date"] = task["Due_Date"];
+        }
+      }
+    }
+  
+    // Convert Due_Date to ISO format
+    taskData["Due_Date"] = new Date(taskData["Due_Date"]).toISOString();
+
+    console.log("EDITED TASK DATA", taskData);
+  
+    const editTaskMongo = await api.editTask(taskData);
+  
+    console.log("EDIT TASK MONGO", editTaskMongo);
+  
+    if (editTaskMongo) {
+      const obj = { categoryId, taskData };
+      dispatch(editTask(obj));
+      handleCloseDetailsModal();
+    }
   };
+  
 
   // Newly Created Task
   const handleFormSubmit = async (event) => {
@@ -103,9 +116,13 @@ export default function Category({ category, categoryId}) {
       taskData[key] = value;
     });
 
+    // BACKEND ADJUSTMENT TO MATCH TASK SCHEMA MODEL
+    taskData.Category = categoryId;
+
     // Send the taskData to the backend:
     // const newTask = await api.createTask(taskData, categoryId);
     const newTask = await api.createTask(taskData);
+    // newTask.Category = 
     console.log(taskData, "ADDED TASK ");
     if (newTask) {
       // const obj = {categoryId};
@@ -134,7 +151,7 @@ export default function Category({ category, categoryId}) {
       {isEditing ? (
         <input
           type="text"
-          defaultValue={title}
+          defaultValue={title.name}
           onChange={handleTitleChange}
           onKeyPress={handleTitleKeyPress}
           onBlur={() => setIsEditing(false)}
@@ -185,5 +202,3 @@ export default function Category({ category, categoryId}) {
     </div>
   );
 }
-
-

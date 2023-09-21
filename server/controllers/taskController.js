@@ -26,10 +26,10 @@ taskController.addTask = async (req, res, next) => {
     Description,
     Category
   } = req.body;
-  //   } = req.body.task;
-  console.log(req.body.taskData, "REQ BODY TASK");
+  console.log("TASK CONTROLLER CATEGORY", Category);
+  // console.log(req.body.taskData, "REQ BODY TASK");
+  console.log(req.body, "TASK CONTROLLER TASK");
 
-  // const {categoryId} = req.body;
 
   try {
     // const task = await Task.create({categoryId, Task_Name, Assignee, Due_Date, Priority, Status, Description, Category});
@@ -62,10 +62,11 @@ taskController.removeTask = async (req, res, next) => {
 };
 
 taskController.editTask = async (req, res, next) => {
-  const { _id } = req.body;
+  // const { _id } = req.body;
+  console.log("REQ.BODY EDITING TASK", req.body);
   
   try {
-    const update = await Task.findOneAndUpdate({_id: _id}, req.body, {new:true});
+    const update = await Task.findOneAndUpdate({_id: req.body._id}, req.body, {new:true});
     res.locals.task = update;
     return next();
   } catch (err) {
