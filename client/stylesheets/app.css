@@ -274,3 +274,50 @@ button:hover {
   align-items:center;
   justify-content: center;
 }
+
+
+/*    Start of Login Page      */
+
+.login-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+}
+
+.login-form{
+  background-color: white;
+  padding: 8px;
+  width: 33.33333%;
+}
+
+.login-heading {
+  font-size: 24px;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+
+.username-div-login{
+  margin-bottom: 9px;
+}
+
+
+.login-inp {
+  width: 100%;
+}
+
+.pass-inp {
+  width: 100%
+}
+
+.login-submit-btn {
+  width: 100%;
+  cursor: pointer;
+  padding: 2px;
+  color: black;
+}
+
+
+/* End of Login Page */
