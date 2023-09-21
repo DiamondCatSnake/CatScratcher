@@ -86,6 +86,15 @@ taskController.findAllTasks = async (req, res, next) => {
     const tasks = await Task.find({User: res.locals.existingUser._id});
     res.locals.tasks = tasks;
     console.log('found some tasks', tasks);
+    const categoryNames = {};
+    for(const task of tasks) {
+      if(!categoryNames[task.Category]) {
+        const result = await Category.findOne({_id: task.Category});
+        categoryNames[task.Category] = result.name;
+      }
+    }
+    res.locals.names = categoryNames;
+    console.log('CATEGORY NAMES ', res.locals.names)
     return next();
   }
   catch (err) {

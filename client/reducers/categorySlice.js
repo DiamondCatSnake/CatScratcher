@@ -106,16 +106,24 @@ export const categorySlice = createSlice({
     },
 
     setCategories: (state, action) => {
-      const tasks = action.payload;
+      const tasks = action.payload.tasks;
+      const categoryNames = action.payload.names;
       const categories = {};
       for(const task of tasks) {
-        const {Assignee, Description, Priority, Status, Task_Name} = task;
-        const taskObj = {Assignee, Description, Priority, Status, Task_Name};
-        categories[task.Category] = 'hello';
+        const {Assignee, Description, Priority, Status, Task_Name, Due_Date, _id} = task;
+        const taskObj = {Assignee, Description, Priority, Status, Task_Name, Due_Date, _id};
+        const categoryName = categoryNames[task.Category];
+        const categoryObj = {
+          name: categoryName,
+          items: [taskObj]
+        }
+        if(!categories[task.Category]) {
+          categories[task.Category] = categoryObj;
+        } else{
+          categories[task.Category].items.push(taskObj);
+        }
       }
-      state.categories = {
-
-      }
+      state.categories = categories;
     }
   }
 });

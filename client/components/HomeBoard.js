@@ -41,19 +41,19 @@ export default function HomeBoard() {
   console.log('Testing category', ncategories);
 
   // useEffect with empty dependency array to fetch
+  // useEffect( () => {
+  //   // Already have all tasks -> Each task has a Category Id; 
+  //   // May be assigned different Category ID's
+  //   // Iterate through them and Fetch each name
+  //   for (const category of ncategories) {
+      
+  //   }     
+  //   // fetch with correct route get Category
+  //   fetch('/')
 
-  useEffect( () => {
-    // fetch with correct route
-    fetch('/')
 
-    // send a route paramter that sends the userid -> inside of getTakss we can use that id and find all the tasks
-    // set a route inside Router -> /renderScreen -> getTasks -> send that data back over here
-    
-    //Have another middle ware to store the name and send it back to client
-    // On first mount -> This right after the user logins. So we have access to that userid which is the user logged in
-    // all of Tasks with that userID
-    // 
-  },[]);
+  //   // 
+  // },[]);
 
 
 

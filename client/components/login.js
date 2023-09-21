@@ -33,7 +33,8 @@ const login = () => {
       alert('login successful');
       console.log('responseData',responseData);
       dispatch(setUserId(responseData.existingUser._id));
-      dispatch(setCategories(responseData.task));
+      const obj = {tasks: responseData.tasks, names: responseData.names}
+      dispatch(setCategories(obj));
       navigate('/mainpage');
     } 
     else {

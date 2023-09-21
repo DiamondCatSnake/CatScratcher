@@ -60,7 +60,6 @@ router.delete('/task', taskController.removeTask, (req, res) => {
 });
 
 // Login - On 1st Render Controllers
-router.get('/renderScreen',)
 
 
 
