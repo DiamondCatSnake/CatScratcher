@@ -7,6 +7,7 @@ import Users from './Users';
 import Login from './login';
 import { useSelector, useDispatch } from 'react-redux';
 import { addNewCategory, dragInCategory } from '../reducers/categorySlice';
+import { api } from '../utils/api';
 
 
 export default function HomeBoard() {
@@ -14,8 +15,10 @@ export default function HomeBoard() {
   const ncategories = useSelector(state => state.categories.categories);
   const dispatch = useDispatch();
 
+  console.log('Testing category', ncategories)
 
-  const onDragEnd = (result, users, setUsers) => {
+  // SOURCE & DESTINATION => Dragging between Categories 
+  const onDragEnd = async (result, users, setUsers) => {
     // Destructure the source and destination from the result object
     const { source, destination } = result;
 
@@ -43,10 +46,24 @@ export default function HomeBoard() {
       // DISPATCH 
     } else {
       const obj = {source, dest: destination}
+      console.log("DRAGGABLE ID", result.draggableId);
+      
+      // Get the task ID
+      const taskId = result.draggableId; 
+      // Get the destination category ID
+      const newCategoryId = destination.droppableId; 
+
+
       dispatch(dragInCategory(obj));
+
+      // Update the backend Categories for Source and destination
+      try {
+        await api.editTask({_id: taskId, Category: newCategoryId}); // Set newCategoryId to null for the source category
+      } catch (error) {
+        console.error('Error updating source category:', error);
+      }
     }
-  }
-    
+  };
 
   const addNewUser = (user) => {
     // console.log('New user:', user);
@@ -58,7 +75,6 @@ export default function HomeBoard() {
     });
   };
   
-
   const removeUser = (userId) => {
     setUsers((prevUsers) => {
       const updatedUsers = prevUsers.filter((user) => user._id !== userId);
@@ -68,18 +84,20 @@ export default function HomeBoard() {
     });
   };
 
-  // const editTask = (categoryId, edittedTask) => {
-  //   const category = categories[categoryId];
-  //   const newItems = edittedTask;
 
-  //   setCategories({
-  //     ...categories,
-  //     [categoryId]: {
-  //       ...category,
-  //       items: newItems,
-  //     },
-  //   });
-  // };
+  const handleAddCategory = async () => {
+    try {
+      // Create new Category in MongoDB
+      const response = await api.createCategory({ category: 'New Category' });
+      // retrieve mongo's ID
+      const mongoCategoryId = response._id
+      // dispatch action with mongoDB's categoryID
+      dispatch(addNewCategory(mongoCategoryId));
+    } catch (error) {
+      console.error('Error creating category:', error);
+    }
+
+  }
 
   return (
     <div className='app'>
@@ -92,13 +110,10 @@ export default function HomeBoard() {
             <Category key={id} categoryId={id} category={category}/>
           ))}
           <div className='add-category-container'>
-            <button onClick={() => dispatch(addNewCategory())} className="add-category-button"> + New Section</button>
+            <button onClick={(handleAddCategory)} className="add-category-button"> + New Section</button>
           </div>
         </div>
       </DragDropContext>
     </div>
   );
 }
-
-
-  

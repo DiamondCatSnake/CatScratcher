@@ -14,6 +14,9 @@ const signup = () => {
       headers: {
         'Content-Type':'application/json'
       }});
+
+    const responseData = await response.json();
+    console.log('resposne Data from signup', responseData)
     
     if (response.status === 200) {
       alert('Registration successful');

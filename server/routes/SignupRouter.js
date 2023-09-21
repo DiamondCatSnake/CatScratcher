@@ -5,14 +5,12 @@ const router = express.Router();
 const userProfileController = require('../controllers/userProfileController');
 const cookieController = require('../controllers/cookieController');
 
-
-//Setting up middleware Create Profile -> Setcookie SSD -> Set Session 
-router.post('/signup', userProfileController.createProfile, cookieController.setSSID, (req, res) => {
+router.post('/signup', userProfileController.createProfile, (req, res) => {
   return res.status(200).json(res.locals.newUser);
 });
 
-router.post('/login', userProfileController.login, cookieController.setSSID, (req,res) => {
-  return res.status(200).json();
+router.post('/login', userProfileController.login, (req,res) => {
+  return res.status(200).json(res.locals.existingUser);
 });
 
 module.exports = router;

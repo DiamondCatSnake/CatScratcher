@@ -13,19 +13,19 @@ categoryController.getCategory = async (req, res, next) => {
       message: { err: 'error occurred in creating category: ' + err },
     });
   }
-  
 };
 
 categoryController.addCategory = async (req, res, next) => {
-  const { addCat } = req.body;
+  const { category } = req.body;
+  console.log('req body category', category);
 
   try {
-    const existingCategory = await Category.findOne({ category: addCat });
+    const existingCategory = await Category.findOne({ category: category });
     if (existingCategory) {
       return res.status(409).json({ message: 'Category already exists' });
     }
 
-    const newCategory = await Category.create({ category: addCat });
+    const newCategory = await Category.create({ category: category });
     res.locals.category = newCategory;
     return next();
   } catch (err) {
@@ -59,10 +59,10 @@ categoryController.removeCategory = async (req, res, next) => {
 };
 
 categoryController.editCategory = async (req, res, next) => {
-  const {oldCat, newCat} = req.body;
+  const { _id, name } = req.body; // Assuming you send _id and name in the request body
 
   try {
-    const update = await Category.findOneAndUpdate({category: oldCat}, {category: newCat}, {new:true});
+    const update = await Category.findOneAndUpdate({ _id }, { name }, { new: true });
     console.log('updated Category: ', update);
     res.locals.category = update;
     return next();
