@@ -23,8 +23,11 @@ const login = () => {
         'Content-Type':'application/json'
       }});
 
+    const responseData = await response.json();
+    console.log('response from the login ', responseData)
     if (response.status === 200) {
       alert('login successful');
+      console.log(responseData);
     } 
     else {
       alert('credentials failed');

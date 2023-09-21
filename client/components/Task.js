@@ -5,6 +5,7 @@ import '../stylesheets/app.css';
 
 
 export default function Task({ task, index, onTaskClick, onTaskRemove }) {
+  console.log("TASK", task);
   return (
     <Draggable draggableId={String(task._id)} index={index}>
       {(provided, snapshot) => (

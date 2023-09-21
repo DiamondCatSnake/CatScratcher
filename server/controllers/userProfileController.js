@@ -1,8 +1,6 @@
 const UserProfile = require('../models/userProfile');
 const bcrypt = require('bcryptjs');
 const salt = bcrypt.genSaltSync(10);
-const jwt = require('jsonwebtoken');
-const secret = 'dasjhk28hdjksd';
 
 const userProfileController = {};
 
@@ -10,7 +8,8 @@ userProfileController.createProfile = (req, res, next) => {
   const { userName, userPassword } = req.body;
   UserProfile.create( { username: userName, password: bcrypt.hashSync(userPassword, salt)})
     .then( (newUser) => {
-      res.locals.newUser = newUser;
+      const {username, _id} = newUser;
+      res.locals.newUser = {userName, _id};
       return next();
     })
     .catch(error => {
@@ -37,6 +36,8 @@ userProfileController.login =  (req, res, next) => {
     .then((userDoc) => {
       const passOk = bcrypt.compareSync(userPasswordLogin, userDoc.password);
       if (passOk) {
+        const {username, _id} = userDoc;
+        res.locals.existingUser = {username, _id};
         return next();
       }
       else {

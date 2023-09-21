@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 import Task from './Task';
 import TaskModal from './taskModal';
@@ -9,12 +9,10 @@ import { addNewTask, removeTask, editTask, editTitle, updateTitle, setIsEditingT
 
 
 export default function Category({ category, categoryId}) {
-  const title = useSelector(state => state.categories.categories[categoryId].name);
+  const title = useSelector(state => state.categories.categories[categoryId]);
   const categoryTasks = useSelector(state => state.categories.categories[categoryId].items);
   const isEditingTitle = useSelector(state => state.categories.isEditingTitle);
 
-  // access specific task state, in editing its property values
-  // const ntask = useSelector(state => state.tasks.task);
   const dispatch = useDispatch();
 
   const [isModalOpen, setModalOpen] = useState(false);    // Creating a new task (popup box)
@@ -22,37 +20,52 @@ export default function Category({ category, categoryId}) {
 
   const [isEditing, setIsEditing] = useState(false);
 
- 
+  /*
+    ================ Title Change Handlers ================
+  */
   const handleTitleClick = () => {
     setIsEditing(true);
   };
 
   const handleTitleChange = (e) => {
     dispatch(editTitle(e.target.value));
+    console.log(e.target.value, "handle title change");
   };
 
   const handleTitleKeyPress = async (e) => {
     if (e.key === 'Enter') {
-    // Update the category title on Enter key press
-      // You may want to add logic to save the edited title to the backend here
-      // For now, we'll update it locally in the state
-      dispatch(updateTitle(categoryId));
-      setIsEditing(false);
+      try {
+        await dispatch(updateTitle(categoryId));
+        await api.editCategory({ _id: categoryId, name: e.target.value });
+        setIsEditing(false);
+      } catch (error) {
+        console.error("Error updating Redux Category:", error);
+      }
     }
   };
 
+  /*
+  ============= Opening Modal handlers ================
+  */
   const handleOpenModal = () => {
     setModalOpen(true);
   };
-
+  
   const handleCloseModal = () => {
     setModalOpen(false);
   };
-
+  
   const handleTaskClick = (task) => {
     setSelectedTask(task);
   };
+  
+  const handleCloseDetailsModal = () => {
+    setSelectedTask(null);
+  };
 
+    /*
+    ============= Task Form Submit handlers ================
+  */
   const formatDueDate = (date) => {
     if (!date) return '';
     const dueDate = new Date(date);
@@ -71,23 +84,32 @@ export default function Category({ category, categoryId}) {
     taskData._id = selectedTask._id;
     taskData.Task_Name = selectedTask.Task_Name;
     formData.forEach((value, key) => {
-      if (key === 'Due_Date' && value === "") {
-        // get the specific task 
-        for (const task of categoryTasks) {
-          if (task._id === taskData._id) {    
-            taskData[key] = task.Due_Date;
-          }
-        }
-      } else {
-        taskData[key] = value;
-      }
+      taskData[key] = value;
     });
-    console.log("EDITED TASK DATA",taskData);
-    const obj = {categoryId, taskData};
-    dispatch(editTask(obj));
-    handleCloseDetailsModal();
+  
+    if (formData.get("Due_Date") === "") {
+      // Get the specific task 
+      for (const task of categoryTasks) {
+        if (task._id === taskData._id) {    
+          taskData["Due_Date"] = task["Due_Date"];
+        }
+      }
+    }
+    
+    // Convert Due_Date to ISO format
+    taskData["Due_Date"] = new Date(taskData["Due_Date"]).toISOString();
+    // call API to update database Task
+    const editTaskMongo = await api.editTask(taskData);
+    
+    // Update state upon
+    if (editTaskMongo) {
+      const obj = { categoryId, taskData };
+      dispatch(editTask(obj));
+      handleCloseDetailsModal();
+    }
   };
-
+  
+  // Newly Created Task
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
@@ -96,9 +118,13 @@ export default function Category({ category, categoryId}) {
       taskData[key] = value;
     });
 
-    // Send the taskData to the backend:
-    const newTask = await api.createTask(taskData);
+    // BACKEND ADJUSTMENT TO MATCH TASK SCHEMA MODEL
+    taskData.Category = categoryId;
 
+    // Send the taskData to the backend:
+    // const newTask = await api.createTask(taskData, categoryId);
+    const newTask = await api.createTask(taskData);
+    console.log(taskData, "ADDED TASK ");
     if (newTask) {
       const obj = {categoryId, newTask};
       dispatch(addNewTask(obj));
@@ -106,6 +132,7 @@ export default function Category({ category, categoryId}) {
     }
   };
 
+  // Delete Task
   const handleTaskRemove = async (taskData) => {
     const removedTask = await api.removeTask({_id: taskData});
     if (removedTask){
@@ -114,18 +141,14 @@ export default function Category({ category, categoryId}) {
       handleCloseModal();
     }
   };
-  
-  const handleCloseDetailsModal = () => {
-    setSelectedTask(null);
-  };
 
   return (
-    <div>
+    <div className="category-center">
       {/* UPDATE TITLE HERE */}
       {isEditing ? (
         <input
           type="text"
-          defaultValue={title}
+          defaultValue={title.name}
           onChange={handleTitleChange}
           onKeyPress={handleTitleKeyPress}
           onBlur={() => setIsEditing(false)}
@@ -133,12 +156,15 @@ export default function Category({ category, categoryId}) {
         />
       ) : (
         <div className='center-title-vertically'>
-          <div className="category-title" onClick={handleTitleClick}>{category.name}
-            <div className='category-title-length' >{category.items.length}</div>
+          <div className="category-title" onClick={handleTitleClick}>
+            <span style={{ color: 'white' }}>{category.name}</span>
+            <div className='category-title-length' >
+              <span style={{ color: 'black' }}>{category.items.length}</span>
+            </div>
           </div>
         </div> 
       )}
-      
+      {/* Initializes droppable ID */}
       <Droppable droppableId={String(categoryId)} key={categoryId}>
         {(provided, snapshot) => (
           <div
@@ -168,10 +194,8 @@ export default function Category({ category, categoryId}) {
           </div>
         )}
       </Droppable>
-      <button onClick={handleOpenModal} className="add-task-button">+ Task</button>
+        <button onClick={handleOpenModal} className="add-task-button">+ Task</button>
       <TaskModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleFormSubmit} />
     </div>
   );
 }
-
-
