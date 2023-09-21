@@ -1,21 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { v4 as uuidv4 } from 'uuid';
 import { Routes, Route, Link } from 'react-router-dom';
 import Category from './Category';
 import Users from './Users';
-import Login from './login';
+import { Login }from './login';
 import { useSelector, useDispatch } from 'react-redux';
 import { addNewCategory, dragInCategory } from '../reducers/categorySlice';
 import { api } from '../utils/api';
+import { useNavigate} from 'react-router-dom';
+
 
 
 export default function HomeBoard() {
   const [users, setUsers] = useState([]);
   const ncategories = useSelector(state => state.categories.categories);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  console.log('Testing category', ncategories);
 
-  console.log('Testing category', ncategories)
+  // useEffect with empty dependency array to fetch
+  // useEffect( () => {
+  //   // Already have all tasks -> Each task has a Category Id; 
+  //   // May be assigned different Category ID's
+  //   // Iterate through them and Fetch each name
+  //   for (const category of ncategories) {
+      
+  //   }     
+  //   // fetch with correct route get Category
+  //   fetch('/')
+
+
+  //   // 
+  // },[]);
+
+
 
   // SOURCE & DESTINATION => Dragging between Categories 
   const onDragEnd = async (result, users, setUsers) => {
@@ -84,7 +103,6 @@ export default function HomeBoard() {
     });
   };
 
-
   const handleAddCategory = async () => {
     try {
       // Create new Category in MongoDB
@@ -96,11 +114,17 @@ export default function HomeBoard() {
     } catch (error) {
       console.error('Error creating category:', error);
     }
-
   }
+
+  // Logout Function
+  const logout = () => {
+    alert('We imported logout');
+    return navigate('/');
+  };
 
   return (
     <div className='app'>
+      <button onClick={() => logout()}> Testing </button>
       <DragDropContext
         onDragEnd={(result) => onDragEnd(result, users, setUsers)}
       >

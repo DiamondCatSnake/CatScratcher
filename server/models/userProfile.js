@@ -7,9 +7,9 @@ const Schema = mongoose.Schema;
 const userLogin = new Schema({
   username: {type: String, required: true, unique: true},
   password: {type: String, required: true},
-  
 });
 
-const UserProfile = mongoose.model('userlogin', userLogin);
+const UserProfile = mongoose.model('userLogin', userLogin);
 
 module.exports = UserProfile;
+

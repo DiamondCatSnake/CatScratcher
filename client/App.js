@@ -8,6 +8,7 @@ const App = () => {
 
   return (
     <div>
+      <Link to='/mainpage'>mainPage</Link>
       <Routes>
         <Route path='/' element={<Login />}/>
         <Route path='/signup' element={<Signup />}/>

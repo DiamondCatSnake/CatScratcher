@@ -6,6 +6,7 @@ const initialState = {
   task: {},
   isEditingTitle: false,
   titleChange: '',
+  user_id: ''
 };
 
 // 1. when add a task
@@ -58,7 +59,7 @@ export const categorySlice = createSlice({
       }
     },
 
-     // finished backend
+    // finished backend
     addNewCategory: (state, action) => {
       console.log("CLICKED");
       const newId = action.payload;
@@ -83,6 +84,7 @@ export const categorySlice = createSlice({
     },
 
     // categoryId = action.payload
+    // REFACTOR LATER
     updateTitle: (state, action) => {
       const categoryId = action.payload;
       const newTitle = state.titleChange;
@@ -97,10 +99,35 @@ export const categorySlice = createSlice({
           },
         },
       };
+    },
+
+    setUserId: (state, action) => {
+      state.user_id = action.payload;
+    },
+
+    setCategories: (state, action) => {
+      const tasks = action.payload.tasks;
+      const categoryNames = action.payload.names;
+      const categories = {};
+      for(const task of tasks) {
+        const {Assignee, Description, Priority, Status, Task_Name, Due_Date, _id} = task;
+        const taskObj = {Assignee, Description, Priority, Status, Task_Name, Due_Date, _id};
+        const categoryName = categoryNames[task.Category];
+        const categoryObj = {
+          name: categoryName,
+          items: [taskObj]
+        }
+        if(!categories[task.Category]) {
+          categories[task.Category] = categoryObj;
+        } else{
+          categories[task.Category].items.push(taskObj);
+        }
+      }
+      state.categories = categories;
     }
   }
 });
 
-export const { addNewTask, dragInCategory, removeTask, addNewCategory, editTask, editTitle, updateTitle, setIsEditingTitle } = categorySlice.actions;
+export const { addNewTask, dragInCategory, removeTask, addNewCategory, editTask, editTitle, updateTitle, setIsEditingTitle, setUserId, setCategories } = categorySlice.actions;
 
 export default categorySlice.reducer;

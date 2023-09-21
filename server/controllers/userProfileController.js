@@ -37,6 +37,7 @@ userProfileController.login =  (req, res, next) => {
       const passOk = bcrypt.compareSync(userPasswordLogin, userDoc.password);
       if (passOk) {
         const {username, _id} = userDoc;
+        console.log('Did the password work?')
         res.locals.existingUser = {username, _id};
         return next();
       }
