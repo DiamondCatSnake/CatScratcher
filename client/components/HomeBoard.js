@@ -11,30 +11,12 @@ import { api } from '../utils/api';
 import { useNavigate} from 'react-router-dom';
 
 
-
 export default function HomeBoard() {
   const [users, setUsers] = useState([]);
   const ncategories = useSelector(state => state.categories.categories);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   console.log('Testing category', ncategories);
-
-  // useEffect with empty dependency array to fetch
-  // useEffect( () => {
-  //   // Already have all tasks -> Each task has a Category Id; 
-  //   // May be assigned different Category ID's
-  //   // Iterate through them and Fetch each name
-  //   for (const category of ncategories) {
-      
-  //   }     
-  //   // fetch with correct route get Category
-  //   fetch('/')
-
-
-  //   // 
-  // },[]);
-
-
 
   // SOURCE & DESTINATION => Dragging between Categories 
   const onDragEnd = async (result, users, setUsers) => {
@@ -118,18 +100,25 @@ export default function HomeBoard() {
 
   // Logout Function
   const logout = () => {
-    alert('We imported logout');
     return navigate('/');
   };
 
   return (
-    <div className='app'>
-      <button onClick={() => logout()}> Testing </button>
-      <DragDropContext
+    <div>
+      
+    <header className='header'>
+   
+      <h1 className='main-page-header'> Crumbs </h1>
+      <button className='logout-button' onClick={() => logout()}>Log out</button>
+      <Link to='/list'>
+      <button className = 'buttonlist' type = 'button'>List</button>
+      </Link>
+    </header>      
+      <div className='app'>
+    <DragDropContext
         onDragEnd={(result) => onDragEnd(result, users, setUsers)}
-      >
-        <div className='categories-container'>
-          <Users userId={'usersCategory'} users={users} addNewUser={addNewUser} removeUser={removeUser} />
+        ><div className='categories-container'>
+          {/* <Users userId={'usersCategory'} users={users} addNewUser={addNewUser} removeUser={removeUser} /> */}
           {Object.entries(ncategories).map(([id, category]) => (
             <Category key={id} categoryId={id} category={category}/>
           ))}
@@ -138,6 +127,7 @@ export default function HomeBoard() {
           </div>
         </div>
       </DragDropContext>
+    </div>
     </div>
   );
 }

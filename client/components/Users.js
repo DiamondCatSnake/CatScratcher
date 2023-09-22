@@ -22,7 +22,6 @@ export default function User({ users, userId, addNewUser, removeUser }) {
 
   return (
     <div>
-      Users
       <Droppable droppableId={String(userId)} key={userId}>
         {(provided, snapshot) => (
           <div

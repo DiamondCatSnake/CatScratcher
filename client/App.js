@@ -3,16 +3,17 @@ import { Routes, Route, Link } from 'react-router-dom';
 import Login from './components/login';
 import Signup from './components/signup';
 import HomeBoard from './components/HomeBoard';
+import List from './components/list';
 
 const App = () => {
 
   return (
     <div>
-      <Link to='/mainpage'>mainPage</Link>
       <Routes>
         <Route path='/' element={<Login />}/>
         <Route path='/signup' element={<Signup />}/>
         <Route path='/mainpage' element={<HomeBoard />} />
+        <Route path='/list' element={<List />} />
       </Routes>
     </div>
   );

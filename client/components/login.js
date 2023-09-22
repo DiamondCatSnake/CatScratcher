@@ -30,7 +30,6 @@ const login = () => {
     const responseData = await response.json();
 
     if (response.status === 200) {
-      alert('login successful');
       console.log('responseData',responseData);
       dispatch(setUserId(responseData.existingUser._id));
       const obj = {tasks: responseData.tasks, names: responseData.names}
@@ -42,9 +41,12 @@ const login = () => {
     }
   };
   
-
   return (
     <div className="login-div">
+      <div className='login-heading-banner'>
+        <h1 className='crumbs-header'> Crumbs </h1> 
+      </div>
+      <h1> Good to see you again </h1> 
       <form className="login-form" onSubmit={loginUser}>
         <h2 className='login-heading'> Login </h2>
         <div className='username-div-login'> 
@@ -59,9 +61,9 @@ const login = () => {
             value={userPasswordLogin} 
             onChange={(ev) => setUserPasswordLogin(ev.target.value)}/>
         </div>
-        <div>
-          <input className="login-submit-btn" type="submit" value="Submit" />
-          <p>New User? <Link to="/signup">Sign up here</Link></p>
+        <input className="login-submit-btn" type="submit" value="Submit" />
+        <div className='new-user-div'>
+          <Link to="/signup" className='custom-link'>Dont have an account?</Link>
         </div>
       
       </form>

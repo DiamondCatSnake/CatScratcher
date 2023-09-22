@@ -53,6 +53,13 @@ export default function Category({ category, categoryId}) {
   };
   
   const handleCloseModal = () => {
+    const modalContent = document.querySelector(".modal-content");
+    const modalWrap = document.querySelector(".modal-wrap");
+
+    modalContent.classList.add("slide-out"); 
+    setTimeout(()=> {
+      modalWrap.classList.toggle("display-none")
+    }, 650)
     setModalOpen(false);
   };
   
@@ -145,6 +152,8 @@ export default function Category({ category, categoryId}) {
   };
 
   return (
+    <div>
+
     <div className="category-center">
       {/* UPDATE TITLE HERE */}
       {isEditing ? (
@@ -187,16 +196,17 @@ export default function Category({ category, categoryId}) {
               <Task key={task._id} task={{...task, Due_Date: formatDueDate(task.Due_Date),}} index={index} onTaskClick={handleTaskClick} onTaskRemove={handleTaskRemove}/>
             ))}
             {provided.placeholder}
-            <TaskDetailsModal
-              isOpen={!!selectedTask}
-              onClose={handleCloseDetailsModal}
-              task={selectedTask}
-              onSubmit={handleEditFormSubmit}
-            />
           </div>
         )}
       </Droppable>
         <button onClick={handleOpenModal} className="add-task-button">+ Task</button>
+          </div>
+        <TaskDetailsModal
+          isOpen={!!selectedTask}
+          onClose={handleCloseDetailsModal}
+          task={selectedTask}
+          onSubmit={handleEditFormSubmit}
+          />
       <TaskModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleFormSubmit} />
     </div>
   );

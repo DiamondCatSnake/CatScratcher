@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import {Link, useNavigate} from 'react-router-dom';
+
 
 const signup = () => {
-  
+  const navigate = useNavigate();
+
   const [userName, setUserName] = useState('');
   const [userPassword, setUserPassword] = useState('');
 
@@ -19,7 +22,10 @@ const signup = () => {
     console.log('resposne Data from signup', responseData)
     
     if (response.status === 200) {
-      alert('Registration successful');
+      alert('Registration Successful');
+
+      navigate('/');
+      
     } else {
       alert('Registration failed');
     }
@@ -27,22 +33,28 @@ const signup = () => {
 
 
   return (
-    <div>
-      <h2>this is SIGNUP</h2>
-      <form onSubmit={register}>
-        <label>
-          Username:
-          <input type="text" placeholder='Enter Username'
+    <div className="login-div">
+      <div className='login-heading-banner'>
+        <h1 className='crumbs-header'> Crumbs </h1> 
+      </div>
+      <form className="login-form" onSubmit={register}>
+        <h2 className='login-heading'> Sign Up </h2>
+        <div className='username-div-login'> 
+          <input className="login-inp" type="text" placeholder='Enter Username'
             value={userName}
             onChange={(ev) => setUserName(ev.target.value)}    
           />
-          Password:
-          <input type="text" placeholder ='Enter Password' 
+        </div>
+        <div className='username-div-login'>
+          <input className='pass-inp' type="password" placeholder ='Enter Password' 
             value={userPassword}
             onChange={(ev) => setUserPassword(ev.target.value)}
           />
-        </label>
-        <input type="submit" value="SignUp" />
+        </div>
+        <input className="login-submit-btn" type="submit" value="Sign Up" />
+        <div className='new-user-div'>
+          <Link to="/" className='custom-link'>Existing User?</Link>
+        </div>
       </form>
     </div>
   );
